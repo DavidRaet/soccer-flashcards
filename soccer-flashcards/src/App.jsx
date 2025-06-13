@@ -1,11 +1,12 @@
 import './App.css'
 import Flashcard from './components/Flashcard' 
+import Header from './components/Header'
 
 function App() {
 
   return (
-    <div>
-      <h1>Soccer Flashcards</h1>
+    <div className='container'>
+      <Header />
       <Flashcard />
     </div>
   )

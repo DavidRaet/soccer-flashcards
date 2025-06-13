@@ -22,13 +22,7 @@ a:hover {
   color: #535bf2;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
+
 
 h1 {
   font-size: 3.2em;
@@ -42,7 +36,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #4b4b4b;
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -54,23 +48,64 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+
+
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px; 
+  perspective: 1000px;
+  background-color: #1a1a1a;
 }
 
-
-.flashcard {
-  border: 3px solid white;
-  padding: 150px 20px;
-  background-color: black;
+.card {
   cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-in-out;
+  width: 600px;
+  height: 300px;
 }
+
+.card.flipped {
+  transform: rotateX(180deg);
+}
+
+
+.front-card {
+  position: absolute;
+  backface-visibility: hidden;
+  background-color: rgb(1, 134, 12);
+  border: 3px solid white;
+  width: 600px;
+  height: 300px;
+  text-align: center;
+  padding: 10px;
+}
+
+.front-card img {
+  width: 200px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+
+.back-card {
+  position: absolute;
+  width: 600px;
+  height: 300px;
+  backface-visibility: hidden;
+  background-color: rgb(118, 134, 1);
+  border: 3px solid white;
+  transform: rotateX(180deg);
+}
+
+.arrows {
+ 
+}
+
+

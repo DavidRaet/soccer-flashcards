@@ -4,7 +4,7 @@ Submitted by: **David Raet**
 
 This web app: **This is a soccer flashcard website to test your knowledge on soccer**
 
-Time spent: **6** hours spent in total
+Time spent: **2** hours spent in total
 
 ## Required Features
 The following **required** functionality is completed:

@@ -63,44 +63,71 @@ const Flashcard = () => {
   const [shuffledData, setShuffledData] = useState([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [userGuess, setUserGuess] = useState('');
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(false);
+
+
+  
+
 
   const shuffleArray = (array) => {
     const shuffled = [...array];
     for(let i = shuffled.length - 1; i > 0; i--){
       const j = Math.floor(Math.random() * (i - 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    return shuffled
+    return shuffled;
+  }
+
+  const shuffleCards = () => {
+    const shuffledCards = shuffleArray(shuffledData);
+    setShuffledData(shuffledCards);
   }
 
   useEffect (() => {
-    const initialShuffle = shuffleArray(flashcardData)
-    setShuffledData(initialShuffle)
+    const initialShuffle = shuffleArray(flashcardData);
+    setShuffledData(initialShuffle);
   }, [])
 
   const nextCard = () => {
     if(currentCardIndex === shuffledData.length - 1){
-      const newShuffled = shuffleArray(flashcardData)
-      setShuffledData(newShuffled)
-      setCurrentCardIndex(0)
+      const newShuffled = shuffleArray(flashcardData);
+      setShuffledData(newShuffled);
+      setCurrentCardIndex(0);
     } else {
-      setCurrentCardIndex(currentCardIndex + 1)
+      setCurrentCardIndex(currentCardIndex + 1);
     }
-    setIsFlipped(false)
+    setIsFlipped(false);
+    setUserGuess('');
+    setHasSubmitted(false);
+    setIsCorrect(false);
   }
   
   const previousCard = () => {
-      if(currentCardIndex.length === 0){
-        setCurrentCardIndex(shuffledData.length - 1)
+      if(currentCardIndex === 0){
+        setCurrentCardIndex(shuffledData.length - 1);
       } else {
-        setCurrentCardIndex(currentCardIndex - 1)
+        setCurrentCardIndex(currentCardIndex - 1);
       }
-      setIsFlipped(false)
+      setIsFlipped(false);
+      setUserGuess('');
+      setHasSubmitted(false);
+      setIsCorrect(false);
    }
 
     const toggleFlip = () => {
-    setIsFlipped(!isFlipped)
+    setIsFlipped(!isFlipped);
   }
+
+      const handleSubmitGuess = () => {
+      const correctAnswer = shuffledData[currentCardIndex].answer.toLowerCase().trim();
+      const guess = userGuess.toLowerCase().trim();
+
+      setIsCorrect(correctAnswer.includes(guess) && guess.length > 2);
+      setHasSubmitted(true);
+  }
+
 
 
   return (
@@ -115,12 +142,46 @@ const Flashcard = () => {
         <h2>{shuffledData[currentCardIndex].answer}</h2>
       </div>
       </div>
+      )}  
+
+      <div className="input-container">
+        <div className="input-wrapper">
+          <input 
+          type="text" 
+          className="guess-input"
+          value={userGuess}
+          onChange={(e) => setUserGuess(e.target.value)}
+          placeholder=" "
+          disabled={hasSubmitted} />
+          <label htmlFor="" className="input-label">
+            Enter your guess, egoist...
+          </label>
+        </div>
+        <button 
+        disabled={!userGuess.trim() || hasSubmitted}
+        onClick={handleSubmitGuess}
+        className="submit-button">
+          Submit Guess
+        </button>
+      </div>
+      {hasSubmitted && (
+        <div className={`feedback ${isCorrect? 'correct' : 'incorrect'}`}>
+          <span className="feedback-icon">{isCorrect ? '✓ ' : '✗ '}</span>
+          <span className="feedback-text">
+            {isCorrect ? 'Correct! Nice work.' 
+            : 
+            `Wrong. The answer is ${shuffledData[currentCardIndex].answer}`
+            } 
+          </span>
+        </div>
+
       )}
-
-
       <div className="button-container">
-      <button onClick={previousCard} disabled={currentCardIndex === 0} className="arrows">←</button>
+      <button onClick={previousCard} disabled={currentCardIndex === 0} className="arrows">
+        ←
+        </button>
       <button onClick={nextCard} className="arrows">→</button>
+      <button onClick={shuffleCards} className="shuffle-button">Shuffle</button>
       </div>
 
     </div>

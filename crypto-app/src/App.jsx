@@ -1,34 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState, useEffect } from 'react'
 import './App.css'
+import CoinInfo from './components/CoinInfo';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [coins, setCoins] = useState(null);
+  const [error, setError] = useState(null);
+  const API_Key = import.meta.env.VITE_APP_API_KEY;
+
+
+  useEffect(() => {
+    const fetchAllCoinData = async () => { 
+      try {
+        const response = await fetch(`https://min-api.cryptocompare.com/data/all/coinlist?api_key=${API_Key}`);
+        if(!response.ok) {
+          throw new Error (`HTTP Error! status: ${response.status}`);
+        }
+        const json = await response.json();
+        setCoins(json);
+      } catch(error) {
+        setError(error.message);
+      }
+    }
+    fetchAllCoinData();
+  }, [API_Key]);
+
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+  <div className="whole-page">
+    <h1>Crypto App</h1>
+
+    {error && 
+      <div className="error">
+        {error}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    }
+    <ul>
+      {coins && 
+        Object.values(coins.Data)
+        .filter((coin) => 
+          coin.IsTrading && 
+          coin.Algorithm !== "N/A" &&
+          coin.ProofType !== "N/A"
+        ).map((coin) => (
+          <CoinInfo 
+          key={coin.Symbol}
+          image={coin.ImageUrL}
+          name={coin.FullName}
+          symbol={coin.Symbol}
+          />
+        ))}
+    </ul>
+  </div>
   )
 }
 

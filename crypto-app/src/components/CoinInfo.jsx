@@ -11,6 +11,7 @@ const CoinInfo = ({image, name, symbol}) => {
                     throw new Error(`HTTP Error! status: ${response.status}`);
                 }
                 const json = await response.json();
+                console.log(`Price data for ${symbol}:`, json);
                 setPrice(json);
             } catch(error) {
                 setError(error.message);

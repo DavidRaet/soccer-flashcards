@@ -16,6 +16,9 @@ function App() {
           throw new Error (`HTTP Error! status: ${response.status}`);
         }
         const json = await response.json();
+        console.log('🔍 API Response received:', json);
+        console.log('🔍 First coin properties:', Object.keys(Object.values(json.Data)[0]));
+        console.log('🔍 First coin full object:', Object.values(json.Data)[0]);
         setCoins(json);
       } catch(error) {
         setError(error.message);
@@ -44,7 +47,7 @@ function App() {
         ).map((coin) => (
           <CoinInfo 
           key={coin.Symbol}
-          image={coin.ImageUrL}
+          image={coin.ImageUrl}
           name={coin.FullName}
           symbol={coin.Symbol}
           />

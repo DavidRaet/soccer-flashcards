@@ -11,9 +11,6 @@ const LeagueBoard = ({leagues}) => {
         {league: 'Japanese J1 League', player: 'Léo Pereira'},
         {league: 'Brazilian Serie A', player: 'Kaio Jorge'}
     ]
-    leagues.forEach((league, index) => {
-        console.log(`League ${index}:`, league);
-    })
     return (
         <div className="league-board">
             <h1>League Overview</h1>

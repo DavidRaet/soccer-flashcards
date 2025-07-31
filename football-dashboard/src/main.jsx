@@ -12,6 +12,6 @@ createRoot(document.getElementById('root')).render(
         <Route path='/' element={<App />} />
         <Route path='/leagues/:leagueName' element={<Standings />} />
       </Routes>
-    </BrowserRouter>
+    </BrowserRouter>  
   </StrictMode>
 )

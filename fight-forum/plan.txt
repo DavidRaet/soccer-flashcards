@@ -1,0 +1,88 @@
+Project MVP Plan: Combat Sports Forum
+Day 1: Set Up & Core CRUD Functionality
+Goal: Users can create, edit, view, and delete posts.
+
+Setup
+
+Scaffold your app (React, Next.js, or your stack of choice).
+
+Set up basic routing (Home, Create Post, View Post).
+
+Choose a simple backend or mock data store (Firebase, Supabase, or local state).
+
+Set up authentication (optional, skip for MVP).
+
+Core Components
+
+Post Creation Form
+
+Input: Title (required), Content (optional), Image URL (optional).
+
+Post List (Home Feed)
+
+Display posts with: title, creation time, upvote count.
+
+Clicking a post opens its details.
+
+Post Detail Page
+
+Shows full post (title, content, image).
+
+Edit, delete, and upvote buttons.
+
+Comment section.
+
+Day 2: Adding Interactivity
+Goal: Sort/search posts and interact (upvote, comment).
+
+Sorting/Searching
+
+Add sort dropdown (by date or upvotes).
+
+Add simple search bar (filter by title).
+
+Upvoting
+
+Each post has an upvote button (increments count; one per click, no auth needed for MVP).
+
+Comments
+
+Add a text-box for leaving comments below the post.
+
+Display a list of comments under each post.
+
+Day 3: Gamification & Polish
+Goal: Add a lightweight gamified touch and responsive layout.
+
+Poll or “Fun Bet” (optional for bonus points)
+
+Add a hard-coded poll to the home page: “Who wins this weekend’s fight?”
+
+Allow users to vote and display poll results.
+
+Badges or Points (optional bonus)
+
+Give users a “Top Commenter” badge if they leave 5+ comments.
+
+Display a simple leaderboard based on upvotes (can just show top 3 post authors).
+
+Styling & Design
+
+Use a simple, clean theme.
+
+Make sure it works on both desktop and mobile.
+
+Add MMA-specific flair (color, images, icons).
+
+Day 4: Final Touches & Testing
+Goal: Ensure MVP requirements and clear UX
+
+Finish any missed features or bugs.
+
+Test all user flows: create, read, edit, delete, upvote, comment, view feed.
+
+Write a short README explaining features, setup, and any limitations.
+
+Deploy to a simple hosting (Vercel, Netlify, Firebase hosting) if possible.
+
+(Optional) Record a 1-min walk-through demo video.

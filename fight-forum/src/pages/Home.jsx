@@ -5,28 +5,66 @@ import { supabase } from '../client';
 const Home = () => {
   const [userInput, setUserInput] = useState('');
   const [posts, setPosts] = useState([]);
-  const [likeCount, setLikeCount] = useState(0);
-  const [commentCount, setCommentCount] = useState(0);
+  const [likeCounts, setLikeCounts] = useState({});
+  const [isLiking, setIsLiking] = useState(false);
+  const [filter, setFilter] = useState('all');
 
     useEffect(() => {
       const fetchPosts = async () => {
         const { data } = await supabase 
             .from('posts')
             .select()
-            .order('created at', {ascending: false});
+            .order('created_at', {ascending: false});
         
         setPosts(data)
+        console.log('Posts data:', data);
       }
       fetchPosts();
     },[]);
 
+       const fetchLikes = async () => {
+        const { data } = await supabase 
+            .from('likes')
+            .select();
 
-    const handleOld = () => {
+        const countsPerPost = {};
+        data?.forEach(like => {
+          countsPerPost[like.post_id] = (countsPerPost[like.post_id] || 0) + 1;
+        });
+        setLikeCounts(countsPerPost);
+        
+        console.log('Likes data:', data);
+      }
 
+    useEffect(() => {
+      fetchLikes();
+    }, []);
+
+
+
+    const handleLikeCount = async (postId) => {
+      if(isLiking) return;
+      setIsLiking(true);
+      if(!likeCounts[postId]){
+        await supabase
+            .from('likes')
+            .insert([{'post_id' : postId}]);
+      } else {
+        await supabase 
+            .from('likes')
+            .delete()
+            .eq('post_id', postId);
+      }
+      await fetchLikes();
+      setIsLiking(false);
     }
 
-    const handleNew = () => {
+    const handleAllPosts = () => {
+        setFilter('all');
+    }
 
+    const handleLast7Days = () => {
+      setFilter('last7days')
     }
 
     const handleChange = (e) => setUserInput(e.target.value);
@@ -40,12 +78,25 @@ const Home = () => {
       </div>
       <input className=' bg-[rgba(147,147,147,0.38)] text-[#222222] font-bold rounded-[1.25rem] w-[29rem] h-[4rem] mt-9 text-right pr-6' onChange={handleChange} type="text" placeholder='search...' />
       <div className='flex gap-10 mt-10'>
-      <button className='w-[12rem] h-[3.75rem] bg-[#F00] rounded-[1.875rem] text-2xl text-[#FFF] ' onClick={handleOld}>Old</button>
-      <button className='w-[12rem] h-[3.75rem] bg-[#F00] rounded-[1.875rem] text-2xl text-[#FFF] ' onClick={handleNew}>New</button>
+      <button className='w-[12rem] h-[3.75rem] bg-[#F00] rounded-[1.875rem] text-2xl text-[#FFF] ' onClick={handleAllPosts}>All</button>
+      <button className='w-[12rem] h-[3.75rem] bg-[#F00] rounded-[1.875rem] text-2xl text-[#FFF] ' onClick={handleLast7Days}>Last 7 Days</button>
       </div>
-      <PostCard
-      
-      />
+      <div className='flex gap-20 mt-10'>
+      {posts &&  
+        posts.map((post) => (
+          <PostCard
+            key={post.id}
+            id={post.id}
+            title={post.title}
+            details={post.details}
+            date={post.created_at}
+            isLiked={!!likeCounts[post.id]}
+            likeCount={likeCounts[post.id] || 0}
+            handleLikeCount={() => handleLikeCount(post.id)}
+          />
+        ))
+      }
+      </div>
     </div>
   );
 };

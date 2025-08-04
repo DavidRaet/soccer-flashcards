@@ -23,24 +23,27 @@ const Create = () => {
     let imageURL = "";
 
     if (userImage) {
-      // Create unique filename to avoid conflicts
+  
       const timestamp = Date.now();
       const uniqueFileName = `${timestamp}_${userImage.name}`;
+      console.log("Generated filename:", uniqueFileName);
 
       const { data, error } = await supabase.storage
         .from('images')
-        .upload(`public/${uniqueFileName}`, userImage);
+        .upload(uniqueFileName, userImage);
 
       if (error) {
-        alert("Image upload failed");
-        console.log(error);
+        console.error("Detailed upload error:", error);
+        alert(`Image upload failed: ${error.message}`);
         return;
       }
-      console.log("Image data:", data);
+      console.log("Upload successful! Image data:", data);
 
       const { data: urlData } = supabase.storage
         .from('images')
-        .getPublicUrl(`public/${uniqueFileName}`);
+        .getPublicUrl(uniqueFileName);
+      
+      console.log("Generated URL:", urlData.publicUrl);
       imageURL = urlData.publicUrl;
     }
     try {

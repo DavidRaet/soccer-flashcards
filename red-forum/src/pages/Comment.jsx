@@ -6,8 +6,13 @@ const Comment = () => {
   const { id } = useParams();
   const [post, setPost] = useState({ title: "", details: "", image_url: "" });
   const [userComment, setUserComment] = useState({ content: "" });
+  const [postLike, setPostLike] = useState(0);
+  const [isLiking, setIsLiking] = useState(false);
+  const [currentlyLiked, setCurrentlyLiked] = useState(false);
   const [comments, setComments] = useState([]);
   const [isFocused, setIsFocused] = useState(false);
+
+
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -21,6 +26,51 @@ const Comment = () => {
     }
     fetchPosts();
   }, [id]);
+
+  const fetchLikes = useCallback (async () => {
+      const { count } = await supabase 
+           .from('likes')
+           .select('*', {count : 'exact'})
+           .eq('post_id', id);
+      setPostLike(count);
+      
+      const { data } = await supabase
+        .from('likes')
+        .select('id')
+        .eq('post_id', id)
+        .limit(1); 
+      setCurrentlyLiked(data && data.length > 0);
+    }, [id]);
+    
+  useEffect(() => {
+    fetchLikes();
+  },[fetchLikes]);
+  
+
+  const handleLikeCount = async (postId) => {
+    if(isLiking) return;
+    setIsLiking(true);
+    const { data } = await supabase
+        .from('likes')
+        .select('id')
+        .eq('post_id', postId)
+        .limit(1);  // Use limit(1) instead of single()
+
+    const userHasLiked = data && data.length > 0;
+    setCurrentlyLiked(!userHasLiked);
+    if(!userHasLiked) {
+      await supabase  
+          .from('likes')
+          .insert([{'post_id': postId}])
+    } else {
+      await supabase
+          .from('likes')
+          .delete()
+          .eq('post_id', postId);
+    }
+    await fetchLikes();
+    setIsLiking(false);
+  }
 
   const fetchComments = useCallback(async () => {
     try {
@@ -123,9 +173,20 @@ const Comment = () => {
       {post.image_url && typeof post.image_url === 'string' && post.image_url.trim() !== "" && (
         <>
           {console.log("Image URL being used:", post.image_url)}
-          <img src={post.image_url} alt="A posted image" />
+          <img className='w-[500px]' src={post.image_url} alt="A posted image" />
         </>
       )}
+      <div className='w-[962px] flex items-center justify-end' >
+       <img 
+        className='hover:scale-110 transition-transform cursor-pointer h-[50px] mt-2' 
+        onClick={ () => handleLikeCount(id)} 
+        src={currentlyLiked ? '/images/liked.png' : '/images/notLiked.png' }
+        alt={isLiking ? 'Unlike Post' : 'Liked Post'}
+        role='button'
+        tabIndex={0}
+        />
+      <p className='text-[1rem] font-bold' >{postLike}</p>
+      </div>
       <input
         className={(isFocused ? 'w-[60.125rem] h-[10.625rem] pb-[7rem]  ' : 'h-[3.625rem]  w-[60.125rem]  ') + 'transition-all duration-300 bg-[rgba(147,147,147,0.38)] rounded-[1.25rem]  text-right pr-20 mt-6'}
         type="text"
@@ -162,3 +223,4 @@ const Comment = () => {
 };
 
 export default Comment;
+

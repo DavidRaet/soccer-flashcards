@@ -34,13 +34,13 @@ const Create = () => {
       return userInput.image_url;
     }
 
-    // Create unique filename to avoid conflicts
+
     const timestamp = Date.now();
     const uniqueFileName = `${timestamp}_${userImage.name}`;
 
     const { data, error } = await supabase.storage
       .from('images')
-      .upload(`public/${uniqueFileName}`, userImage);
+      .upload(uniqueFileName, userImage);
 
       console.log('image added', uniqueFileName);
     if (error) {
@@ -52,7 +52,7 @@ const Create = () => {
 
     const { data: urlData } = supabase.storage
       .from('images')
-      .getPublicUrl(`public/${uniqueFileName}`);
+      .getPublicUrl(uniqueFileName);
 
     console.log("Generated public URL:", urlData.publicUrl);
     return urlData.publicUrl;
